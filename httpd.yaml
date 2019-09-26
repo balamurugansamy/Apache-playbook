@@ -1,0 +1,55 @@
+ - hosts: dbserver
+   become: yes
+   vars:
+     pkg1: httpd
+     pkg2: firewalld
+   tasks:
+     - name: Installing {{ pkg1 }} service
+       yum:
+         name: "{{ pkg1 }}"
+         state: latest
+     - name: Start {{ pkg1 }} service
+       service:
+         name: "{{ pkg1 }}"
+         state: restarted
+     - name: Putting index page
+       copy:
+         content: "welcome ansible automation"
+         dest: /var/www/html/index.html
+     - name: Check firewall service
+       service:
+         name: firewalld
+         state: restarted
+     - name: Check firewall access
+       firewalld:
+         port: 80/tcp
+         permanent: true
+         state: enabled
+         
+ - hosts: appserver
+   become: yes
+   vars:
+     pkg1: httpd
+     pkg2: firewalld
+   tasks:
+     - name: Installing apache
+       yum:
+         name: "{{ pkg1 }}"
+         state: latest
+     - name: Start apache service
+       service:
+          name: "{{ pkg1 }}"
+          state: restarted
+     - name: Putting index page
+       copy:
+         content: "welcome ansible automation"
+         dest: /var/www/html/index.html
+     - name: Check firewall service
+       service:
+         name: firewalld
+         state: restarted
+     - name: Check firewall access
+       firewalld:
+         port: 80/tcp
+         permanent: true 
+         state: enabled
